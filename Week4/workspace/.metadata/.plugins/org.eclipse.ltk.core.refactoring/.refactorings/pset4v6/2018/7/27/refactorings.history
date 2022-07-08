@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename field &apos;listNodes&apos; in &apos;BoggleSolver&apos; to &apos;nodeBag&apos;&#x0D;&#x0A;- Original project: &apos;pset4v6&apos;&#x0D;&#x0A;- Original element: &apos;BoggleSolver.listNodes&apos;&#x0D;&#x0A;- Renamed element: &apos;BoggleSolver.nodeBag&apos;&#x0D;&#x0A;- Update references to refactored element&#x0D;&#x0A;- Update textual occurrences in comments and strings" delegate="false" deprecate="false" description="Rename field &apos;listNodes&apos;" flags="589826" getter="false" id="org.eclipse.jdt.ui.rename.field" input="/src&lt;{BoggleSolver.java[BoggleSolver^listNodes" name="nodeBag" references="true" setter="false" stamp="1530512286105" textual="false" version="1.0"/>
+</session>

@@ -1,0 +1,370 @@
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
+
+import edu.princeton.cs.algs4.IndexMinPQ;
+import edu.princeton.cs.algs4.Picture;
+
+/**
+ * 
+ */
+
+/**
+ * @author David Price
+ *
+ */
+public class SeamCarver {
+    private Picture inputPicture;
+    private double[][] energyMatrix;
+    
+    // create a seam carver object based on the given picture
+    public SeamCarver(Picture picture) {
+        this.inputPicture = picture;
+        
+    }
+    
+    // current picture
+    public Picture picture() {
+        return this.inputPicture;
+        
+    }
+    
+    // width of current picture
+    public int width() {
+        int w = this.inputPicture.width();
+        return w;
+    }
+
+    // height of current picture
+    public int height() {
+        int h = this.inputPicture.height();
+        return h;
+    }
+    
+    // energy of pixel at column x and row y
+    public double energy(int x, int y) {
+        
+        double energy = 1000;
+        
+        if ((x < 0 || x >= this.width()) || (y < 0 || y >= this.height())) {
+            throw new IndexOutOfBoundsException("Invalid range for x or y to energy function");
+        }
+        
+        else if ((x == 0 || x == this.width() - 1)) {
+            return energy;
+        }
+        else if ((y == 0 || y == this.height() - 1)) {
+            return energy;
+        }
+        else {
+            double deltaSqX = deltaSquaredX(x, y);
+            double deltaSqY = deltaSquaredY(x, y);
+            
+            energy = Math.sqrt(deltaSqX + deltaSqY);
+        }
+        return energy;
+    }
+
+    // sequence of indices for horizontal seam
+    public int[] findHorizontalSeam() {
+        
+        this.transposePicture();
+        
+        int[] horizontalSeam = this.findVerticalSeam();
+        
+        this.transposePicture();
+        
+        return horizontalSeam;
+    }
+
+    // sequence of indices for vertical seam
+    public int[] findVerticalSeam() {
+        int w = this.width();
+        int h = this.height();
+        
+        this.calcEnergymatrix();
+        
+        // calculate cumulative minimum energy matrix for the image using dynamic
+        // programming technique
+        // M(x,y) = e(x,y) + min[M(x-1, y-1),M(x,y-1),M(x+1,y-1)]
+        double[][] minCostMatrix = new double[w][h];
+        
+        // initialise first row of minCostMatrix
+        for (int col = 0; col < w; col++) {
+            minCostMatrix[col][0] = this.energyMatrix[col][0];
+            
+        }
+       
+        
+        for (int col = 0; col < w; col++) {
+            for (int row = 1; row < h; row++) {
+                // left edge of image
+                if (col == 0) {
+                    minCostMatrix[col][row] = 
+                            this.energyMatrix[col][row] + 
+                            Math.min(minCostMatrix[col][row-1], minCostMatrix[col+1][row-1]);
+                }
+                
+                // right edge of image
+                else if (col == w - 1) {
+                    minCostMatrix[col][row] =
+                            this.energyMatrix[col][row] + 
+                            Math.min(minCostMatrix[col-1][row-1], minCostMatrix[col][row-1]);
+                }
+                // the rest of the image
+                else {
+                    minCostMatrix[col][row] = 
+                            this.energyMatrix[col][row] + 
+                            Math.min(minCostMatrix[col-1][row-1], Math.min(minCostMatrix[col][row-1], minCostMatrix[col+1][row-1]));
+                }
+                
+            }
+        }
+        System.out.println();
+        for (int col = 0; col < w; col++) {
+            
+            System.out.println(minCostMatrix[col][0]);
+            
+        }
+        
+        System.out.println();
+        for (int col = 0; col < w; col++) {
+            
+            System.out.println(minCostMatrix[col][1]);
+            
+        }
+        System.out.println();
+        for (int col = 0; col < w; col++) {
+            
+            
+            System.out.println(minCostMatrix[col][2]);
+
+            
+        }
+        System.out.println();
+        for (int col = 0; col < w; col++) {
+            
+            System.out.println(minCostMatrix[col][h-2]);
+        }
+        System.out.println();
+        // Then minimum value (or the first smallest) of minCostMatrix at bottom row is found
+        double minTotalCost = Double.MAX_VALUE;
+        int minCol = 0;
+        for (int col = 0; col < w; col++) {
+            if (minCostMatrix[col][h-1] < minTotalCost) {
+                minTotalCost = minCostMatrix[col][h-1];
+                minCol = col;
+            }
+        }
+        
+        System.out.println("minCol = " + minCol);
+        
+        // Then find path by backtracking from that point (minCol, h-1)
+        // Add to an ArrayList
+        ArrayList<Integer> seamPath = new ArrayList<Integer>();
+        seamPath.add(minCol);
+        
+        int prevCol = minCol;
+        int nextCol = 0;
+        minTotalCost = Double.MAX_VALUE;
+        int row = h-2;
+        while (row > 0) {
+            
+            
+            
+            // left edge of image
+            if (prevCol == 0) {
+                if (minCostMatrix[prevCol][row] < minTotalCost) {
+                    nextCol = prevCol;
+                    minTotalCost = minCostMatrix[prevCol][row];
+                }
+                if (minCostMatrix[prevCol+1][row] < minTotalCost) {
+                    nextCol = prevCol+1;
+                    minTotalCost = minCostMatrix[prevCol+1][row];
+                }
+            }
+            
+            // right edge of image
+            else if (prevCol == w-1) {
+                if (minCostMatrix[prevCol-1][row] < minTotalCost) {
+                    nextCol = prevCol-1;
+                    minTotalCost = minCostMatrix[prevCol-1][row];
+                }
+                if (minCostMatrix[prevCol][row] < minTotalCost) {
+                    nextCol = prevCol;
+                    minTotalCost = minCostMatrix[prevCol][row];
+                }
+            }
+            
+            // rest of image
+            else {
+                if (minCostMatrix[prevCol-1][row] < minTotalCost) {
+                    nextCol = prevCol-1;
+                    minTotalCost = minCostMatrix[prevCol-1][row];
+                }
+                if (minCostMatrix[prevCol][row] < minTotalCost) {
+                    nextCol = prevCol;
+                    minTotalCost = minCostMatrix[prevCol][row];
+                }
+                if (minCostMatrix[prevCol+1][row] < minTotalCost) {
+                    nextCol = prevCol+1;
+                    minTotalCost = minCostMatrix[prevCol+1][row];
+                }
+            }
+            
+            seamPath.add(0,nextCol);
+            prevCol = nextCol;
+            row--;
+            minTotalCost = Double.MAX_VALUE;
+        }
+        
+        int[] seamArray = new int[seamPath.size()];
+        
+        for (int i = 0; i < seamPath.size(); i++) {
+            seamArray[i] = seamPath.get(i);
+        }
+        
+        return seamArray;
+    }
+    
+    // remove horizontal seam from current picture
+    public void removeHorizontalSeam(int[] seam) {
+        
+        int w = this.width();
+        
+        int h = this.height();
+        
+        if (h <= 1) {
+            throw new java.lang.IllegalArgumentException();
+        }
+        
+        // transpose image
+        this.transposePicture();
+        
+        
+        // call removeVerticalSeam
+        this.removeVerticalSeam(seam);
+        
+        // transpose image back
+        this.transposePicture();
+        
+    }
+    
+    
+    // remove vertical seam from current picture
+    public void removeVerticalSeam(int[] seam) {
+        
+        int w = this.width();
+        
+        if (w <= 1) {
+            throw new java.lang.IllegalArgumentException();
+        }
+        
+        int h = this.height();
+        
+        Picture copyPic = new Picture(w - 1, h);
+        
+        for (int row = 0; row < h; row++) {
+            // just copy pixel by pixel up until seam
+            for (int col = 0; col < seam[row] - 1; col++) {
+                copyPic.set(col, row, this.inputPicture.get(col, row));
+            }
+            // after seam copy pixel from one to the right
+            for (int col = seam[row]; col < w - 1; col++) {
+                copyPic.set(col, row, this.inputPicture.get(col + 1, row));
+            }
+        }
+        
+        this.inputPicture = copyPic;
+        
+    }
+    
+    // Private method to calculate the deltax-squared
+    private double deltaSquaredX(int x, int y) {
+        
+        // Where: 0 < x < this.width() - 1
+        
+        Color color1 = this.inputPicture.get(x + 1, y);
+        Color color2 = this.inputPicture.get(x - 1, y);
+        
+        int redX = color1.getRed() - color2.getRed();
+        int blueX = color1.getBlue() - color2.getBlue();
+        int greenX = color1.getGreen() - color2.getGreen();
+        
+        double deltaSqX = Math.pow(redX, 2) + Math.pow(blueX, 2) + Math.pow(greenX, 2);
+        
+        return deltaSqX;
+    }
+    
+    // Private method to calculate the deltay-squared
+    private double deltaSquaredY(int x, int y) {
+        
+        //Where: 0 < y < this.height() - 1
+        
+        Color color1 = this.inputPicture.get(x, y + 1);
+        Color color2 = this.inputPicture.get(x, y - 1);
+        
+        int redY = color1.getRed() - color2.getRed();
+        int blueY = color1.getBlue() - color2.getBlue();
+        int greenY = color1.getGreen() - color2.getGreen();
+        
+        double deltaSqY = Math.pow(redY, 2) + Math.pow(blueY, 2) + Math.pow(greenY, 2);
+        
+        return deltaSqY;
+    }
+    
+    // Private method to calculate Energy Matrix in constructor
+    private void calcEnergymatrix() {
+        int w = width();
+        int h = height();
+        this.energyMatrix = new double[w][h];
+        
+        for (int x = 0; x < w; x++) {
+            for (int y = 0; y < h; y++) {
+                this.energyMatrix[x][y] = energy(x, y);
+            }
+        }
+        
+    }
+    
+    // private method to transpose Energy Matrix
+    private void transposeEnergyMatrix() {
+        //transpose energy matrix
+        int w = this.width();
+        int h = this.height();
+        
+        for (int i = 0; i < h; i++) {
+            for (int j = i+1; j < w; j++) {
+                double temp = this.energyMatrix[i][j];
+                this.energyMatrix[i][j] = this.energyMatrix[j][i];
+                this.energyMatrix[j][i] = temp;
+            }
+        }
+        
+    }
+    
+   
+    
+    // Helper to transpose pic
+    private void transposePicture() {
+        
+        int w = this.inputPicture.width();
+        int h = this.inputPicture.height();
+        
+        
+       Picture transPic = new Picture(h, w);
+       
+       for (int col = 0; col < w; col++) {
+           for (int row = 0; row < h; row++) {
+               transPic.set(row, col, this.inputPicture.get(col, row));
+           }
+       }
+       
+       this.inputPicture = transPic;
+       
+        
+    }
+    
+    
+    
+}

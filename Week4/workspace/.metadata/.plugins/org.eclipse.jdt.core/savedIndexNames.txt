@@ -1,0 +1,23 @@
+INDEX VERSION 1.131+/media/nvme0n1p4/Users/David Price/Dropbox/Coursera/Algorithms/Part_II/Week4/workspace/.metadata/.plugins/org.eclipse.jdt.core
+120211678.index
+2643564606.index
+3885805113.index
+1913109094.index
+1962032395.index
+2630498905.index
+2982035129.index
+66391453.index
+3888198363.index
+1932949083.index
+3721837726.index
+2233963263.index
+3935742120.index
+46282419.index
+3214207201.index
+2771403403.index
+2066489604.index
+2841451250.index
+3818633329.index
+77121924.index
+527624335.index
+742522455.index

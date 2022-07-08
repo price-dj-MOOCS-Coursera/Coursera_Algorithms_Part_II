@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.eclipse.jdt.launching.localJavaApplication">
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
+<listEntry value="/pset1v4/src/Outcast.java"/>
+</listAttribute>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
+<listEntry value="1"/>
+</listAttribute>
+<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="Outcast"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="D:\Documents\Dropbox\Coursera\Algorithms\Part_II\Week1\workspace\pset1v3\src\synsets.txt&#13;&#10;D:\Documents\Dropbox\Coursera\Algorithms\Part_II\Week1\workspace\pset1v3\src\hypernyms.txt&#13;&#10;D:\Documents\Dropbox\Coursera\Algorithms\Part_II\Week1\workspace\pset1v3\src\outcast10.txt"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="pset1v4"/>
+</launchConfiguration>

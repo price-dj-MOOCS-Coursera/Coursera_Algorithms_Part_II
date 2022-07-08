@@ -1,0 +1,162 @@
+import edu.princeton.cs.algs4.In;
+
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import edu.princeton.cs.algs4.Bag;
+import edu.princeton.cs.algs4.Digraph;
+import edu.princeton.cs.algs4.StdIn;
+
+public class WordNet {
+    
+    private int V;                                      // number of vertices in this digraph
+    private int E;                                      // number of edges in this digraph
+    private Bag<Integer>[] hypernymsAdj;                // adj[v] = adjacency list for vertex v
+    private Map<String, List<Integer>> synsetsMap;      // map of synset Nouns to their synset ids (List = synset)
+    private int[] indegree;                             // indegree[v] = indegree of vertex v
+    
+    
+    // constructor takes the name of the two input files
+    public WordNet(String synsets, String hypernyms) {
+        if (synsets == null || hypernyms == null) throw new NullPointerException("Null argument(s) to WordNet constructor.");
+        
+        // initialise the SynsetsMap
+        synsetsMap = initialiseSynsetsMap(synsets);
+        
+        // initialise the hypernyms Adjacency List Array of Bags
+        V = synsetsMap.size();
+        hypernymsAdj = initialiseHypernymsAdj(hypernyms, V);
+        
+        Deque<Integer> topoSort = topological();
+        
+        // check that the last element in topoSort is the root ie "entity" and checks synset ID against record in synsetsMap if not then this is not a rooted DAG 
+        if (topoSort.getLast() != synsetsMap.get("entity").get(0)) { 
+            throw new IllegalArgumentException("The input does not correspond to a rooted DAG");
+        }
+        
+    }
+
+    // returns all WordNet nouns
+    public Iterable<String> nouns() {
+        List<String> nouns = new ArrayList<String>(synsetsMap.keySet());
+        
+        return Collections.unmodifiableList(nouns);
+    }
+
+    // is the word a WordNet noun?
+    public boolean isNoun(String word) {
+        return synsetsMap.containsKey(word);
+    }
+
+    // distance between nounA and nounB (defined below)
+    public int distance(String nounA, String nounB) {
+        
+    }
+
+    // a synset (second field of synsets.txt) that is the common ancestor of nounA and nounB
+    // in a shortest ancestral path (defined below)
+    public String sap(String nounA, String nounB) {
+        
+    }
+    
+    private Map<String, List<Integer>> initialiseSynsetsMap(String synsets) {
+        Map<String, List<Integer>> results = new HashMap<String, List<Integer>>();
+        try(BufferedReader br = new BufferedReader(new FileReader(synsets + ".txt"))) {
+            for(String line; (line = br.readLine()) != null; ) {
+                // process the line.
+                String[] fields = line.split(",");
+                int synsetsID = Integer.parseInt(fields[0]);
+                String[] synsetsArr = fields[1].split(" ");
+                for (int i = 0; i < synsetsArr.length; i++) {
+                    if (!results.containsKey(synsetsArr[i])) {
+                        results.put(synsetsArr[i], new ArrayList<Integer>(synsetsID));
+                    }
+                    else {
+                        List<Integer> synsetsIdList = results.get(synsetsArr[i]);
+                        synsetsIdList.add(synsetsID);
+                        results.put(synsetsArr[i], synsetsIdList);
+                    }
+                }
+                
+            }
+            
+        }
+        
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        return results;
+    }
+    
+    private Bag<Integer>[] initialiseHypernymsAdj(String hypernyms, int V) {
+        
+        Bag<Integer>[] resultsAdj = (Bag<Integer>[]) new Bag[V];
+        for (int v = 0; v < V; v++) {
+            resultsAdj[v] = new Bag<Integer>();
+        }
+        try(BufferedReader br = new BufferedReader(new FileReader(hypernyms + ".txt"))) {
+            for(String line; (line = br.readLine()) != null; ) {
+                // process the line.
+                String[] fields = line.split(",");
+                for (int i = 1; i < fields.length; i++) {
+                    resultsAdj[Integer.parseInt(fields[0])].add(Integer.parseInt(fields[i]));
+                }
+                
+            }
+            
+        }
+        
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        return resultsAdj;
+    }
+    
+    private Deque<Integer> topological() {
+        boolean[] used = new boolean[hypernymsAdj.length];
+        for (int i = 0; i < used.length; i++) {
+            used[i] = false;
+        }
+        
+        Deque<Integer> order = new ArrayDeque<Integer>();
+        
+        for (int x = 0; x < hypernymsAdj.length; x++) {
+            if (!used[x]) {
+                order = dfs(used, order, x);
+            }
+        }
+        
+        return order;
+    }
+    
+    private Deque<Integer> dfs(boolean[] used, Deque<Integer> order, int x) {
+        used[x] = true;
+        
+        for (int w : hypernymsAdj[x]) {
+            if (!used[w]) {
+                order = dfs(used, order, w);
+            }
+        }
+        order.addFirst(x);
+        
+        return order;
+    }
+    
+    public static void main(String[] args) {
+        // TODO Auto-generated method stub
+
+    }
+
+}

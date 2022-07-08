@@ -1,0 +1,69 @@
+import edu.princeton.cs.algs4.In;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import edu.princeton.cs.algs4.Bag;
+import edu.princeton.cs.algs4.Digraph;
+import edu.princeton.cs.algs4.StdIn;
+
+public class WordNet {
+    
+    private int V;                                      // number of vertices in this digraph
+    private int E;                                      // number of edges in this digraph
+    private Bag<Integer>[] hypernymsAdj;                // adj[v] = adjacency list for vertex v
+    private Map<Integer, List<String>> synsetsMap;      // map of synset ids to List of strings of Nouns (List = synset)
+    private int[] indegree;                             // indegree[v] = indegree of vertex v
+    
+    
+    // constructor takes the name of the two input files
+    public WordNet(String synsets, String hypernyms) throws IOException {
+        if (synsets == null || hypernyms == null) throw new NullPointerException("Null argument(s) to WordNet constructor.");
+        
+        synsetsMap = new HashMap<Integer, List<String>>();
+        try(BufferedReader br = new BufferedReader(new FileReader(synsets + ".txt"))) {
+            for(String line; (line = br.readLine()) != null; ) {
+                // process the line.
+                String[] fields = line.split(",");
+                
+            }
+            
+        }
+        
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+    }
+
+    // returns all WordNet nouns
+    public Iterable<String> nouns() {
+        
+    }
+
+    // is the word a WordNet noun?
+    public boolean isNoun(String word) {
+        
+    }
+
+    // distance between nounA and nounB (defined below)
+    public int distance(String nounA, String nounB) {
+        
+    }
+
+    // a synset (second field of synsets.txt) that is the common ancestor of nounA and nounB
+    // in a shortest ancestral path (defined below)
+    public String sap(String nounA, String nounB) {
+        
+    }
+
+    public static void main(String[] args) {
+        // TODO Auto-generated method stub
+
+    }
+
+}

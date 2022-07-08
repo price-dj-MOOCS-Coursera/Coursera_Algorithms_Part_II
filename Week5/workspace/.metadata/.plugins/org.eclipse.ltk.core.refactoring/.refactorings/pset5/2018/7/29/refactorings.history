@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename field &apos;decodeList&apos; in &apos;MoveToFront&apos; to &apos;DECODE_LIST&apos;&#x0D;&#x0A;- Original project: &apos;pset5&apos;&#x0D;&#x0A;- Original element: &apos;MoveToFront.decodeList&apos;&#x0D;&#x0A;- Renamed element: &apos;MoveToFront.DECODE_LIST&apos;&#x0D;&#x0A;- Update references to refactored element&#x0D;&#x0A;- Update textual occurrences in comments and strings" delegate="false" deprecate="false" description="Rename field &apos;decodeList&apos;" flags="589826" getter="false" id="org.eclipse.jdt.ui.rename.field" input="/src&lt;{MoveToFront.java[MoveToFront^decodeList" name="DECODE_LIST" references="true" setter="false" stamp="1531707864522" textual="false" version="1.0"/>
+</session>
